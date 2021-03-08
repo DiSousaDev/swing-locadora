@@ -261,6 +261,15 @@ public class CadastrarVendedorView {
 	 */
 	private void limparTela() {
 		
+		tfCodigo.setEditable(!false);
+		tfNome.setEditable(!false);
+		tfAreaDeVenda.setEditable(!false);
+		tfCidade.setEditable(!false);
+		tfIdade.setEditable(!false);
+		tfSalario.setEditable(!false);
+		grpSexo.clearSelection();
+		cbxEstados.setSelectedIndex(0);
+				
 	}
 
 }
