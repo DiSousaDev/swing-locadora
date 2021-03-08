@@ -38,7 +38,7 @@ public class CadastrarVendedorView {
 	// componente responsavel por gerenciar os JRadioButton
 	private ButtonGroup grpSexo;
 	// botao para verificar a acao de clique
-	private JButton btSalvar, btCancelar;
+	private JButton btSalvar, btCancelar, btNovo, btSair;
 	// componente para organização
 	private JPanel painel = new JPanel();
 
@@ -134,18 +134,44 @@ public class CadastrarVendedorView {
 		/*
 		 * configurações do JButton
 		 */
-		btSalvar = new JButton();
-		btCancelar = new JButton();
-		// configurando texto botao
-		btSalvar.setText("SALVAR");
-		btCancelar.setText("CANCELAR");
+		btSalvar = new JButton("SALVAR");
+		btCancelar = new JButton("CANCELAR");
+		btNovo = new JButton("NOVO");
+		btSair = new JButton("SAIR");
 		btSalvar.setBounds(120, 268, 140, 30);
 		btCancelar.setBounds(280, 268, 140, 30);
+		btNovo.setBounds(120, 268, 140, 30);
+		btSair.setBounds(280, 268, 140, 30);
 		// configurando ação do botão
+		btSalvar.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				janela.dispose();
+			}
+		});
+		
 		btCancelar.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				janela.dispose();
+			}
+		});
+		
+		btNovo.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				liberarTela();
+			}
+		});
+		
+		btSair.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// fecha a janela e mantém o menu aberto
 				janela.dispose();
 			}
 		});
@@ -176,11 +202,65 @@ public class CadastrarVendedorView {
 		painel.add(rbFeminimo);
 		painel.add(btSalvar);
 		painel.add(btCancelar);
+		painel.add(btNovo);
+		painel.add(btSair);
 
+		// bloqueando tela ao iniciar
+		bloquearTela();
+		
 		// configurando a visibilidade da tela
 		janela.setVisible(true);
 		janela.setAlwaysOnTop(true);
 
+	}
+	
+	/*
+	 * método para bloquear a tela de cadastro
+	 */
+	private void bloquearTela() {
+		
+		tfCodigo.setEditable(false);
+		tfNome.setEditable(false);
+		tfAreaDeVenda.setEditable(false);
+		tfCidade.setEditable(false);
+		cbxEstados.setEnabled(false);
+		tfIdade.setEditable(false);
+		tfSalario.setEditable(false);
+		rbMasculino.setEnabled(false);
+		rbFeminimo.setEnabled(false);
+		btSalvar.setVisible(false);
+		btCancelar.setVisible(false);
+		btNovo.setVisible(true);
+		btSair.setVisible(true);
+		
+	}
+	
+	/*
+	 * método para liberar a tela de cadastro
+	 */
+	private void liberarTela() {
+		
+		tfCodigo.setEditable(!false);
+		tfNome.setEditable(!false);
+		tfAreaDeVenda.setEditable(!false);
+		tfCidade.setEditable(!false);
+		cbxEstados.setEnabled(!false);
+		tfIdade.setEditable(!false);
+		tfSalario.setEditable(!false);
+		rbMasculino.setEnabled(!false);
+		rbFeminimo.setEnabled(!false);
+		btSalvar.setVisible(!false);
+		btCancelar.setVisible(!false);
+		btNovo.setVisible(!true);
+		btSair.setVisible(!true);
+		
+	}
+	
+	/*
+	 * método para limpar a tela de cadastro
+	 */
+	private void limparTela() {
+		
 	}
 
 }

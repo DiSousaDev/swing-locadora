@@ -252,12 +252,4 @@ public class MenuPrincipalView {
 
 	}// fim do iniciaGui
 
-	// metodo principar pra executar a classe.
-	public static void main(String[] args) {
-
-		Tema.setTheme(Tema.getTheme());
-
-		new MenuPrincipalView().iniciaGui();
-	}
-
 } // fim da classe
