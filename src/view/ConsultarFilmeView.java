@@ -98,6 +98,7 @@ public class ConsultarFilmeView {
 
 		// configurando a visibilidade da tela
 		janela.setVisible(true);
+		janela.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		janela.setAlwaysOnTop(true);
 
 	}

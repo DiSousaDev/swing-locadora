@@ -12,10 +12,15 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import util.Utilitaria;
+import controller.EstadoController;
+import model.Estado;
+import util.Mensagem;
+import util.Titulo;
+import util.Valida;
 
 /**
-  * Classe para receber, armazenar e exibir os dados da tela de Cadastro de Vendedores
+ * Classe para receber, armazenar e exibir os dados da tela de Cadastro de
+ * Vendedores
  * 
  * @author Éder Diego de Sousa
  * @since 4 de mar. de 2021
@@ -31,8 +36,6 @@ public class CadastrarVendedorView {
 	private JTextField tfCodigo, tfNome, tfAreaDeVenda, tfCidade, tfIdade, tfSalario;
 	// declarando componente comboBox
 	private JComboBox<String> cbxEstados;
-	// vetor para armaznar os estados
-	private String estados[] = Utilitaria.getEstados();
 	// declarando componentes radio button
 	private JRadioButton rbMasculino, rbFeminimo;
 	// componente responsavel por gerenciar os JRadioButton
@@ -69,7 +72,7 @@ public class CadastrarVendedorView {
 		lbSexo = new JLabel();
 		lbIdade = new JLabel();
 		lbSalario = new JLabel();
-	
+
 		// configurando o texto
 		lbCodigo.setText("Código:");
 		lbNome.setText("Nome:");
@@ -109,8 +112,9 @@ public class CadastrarVendedorView {
 		/*
 		 * configuração da JComboBox
 		 */
-		cbxEstados = new JComboBox<String>(estados);
-		cbxEstados.setBounds(120, 138, 300, 25);;
+		cbxEstados = new JComboBox<String>();
+		cbxEstados.setBounds(120, 138, 300, 25);
+		;
 
 		/*
 		 * configuração dos radio button
@@ -147,26 +151,30 @@ public class CadastrarVendedorView {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				janela.dispose();
+				salvar();
 			}
 		});
-		
+
 		btCancelar.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				janela.dispose();
+				// método para limpar os campos da tela
+				limparTela();
+				// método para bloquear os campos da tela
+				bloquearTela();
 			}
 		});
-		
+
 		btNovo.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// método para desbloqurar a tela
 				liberarTela();
 			}
 		});
-		
+
 		btSair.addActionListener(new ActionListener() {
 
 			@Override
@@ -190,7 +198,7 @@ public class CadastrarVendedorView {
 		painel.add(lbEstado);
 		painel.add(lbSexo);
 		painel.add(lbIdade);
-		painel.add(lbSalario);		
+		painel.add(lbSalario);
 		painel.add(tfCodigo);
 		painel.add(tfNome);
 		painel.add(tfAreaDeVenda);
@@ -205,71 +213,172 @@ public class CadastrarVendedorView {
 		painel.add(btNovo);
 		painel.add(btSair);
 
+		// carregando combo
+		carregarComboEstados();
+
 		// bloqueando tela ao iniciar
 		bloquearTela();
-		
+
 		// configurando a visibilidade da tela
 		janela.setVisible(true);
-		janela.setAlwaysOnTop(true);
+		janela.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 	}
-	
+
 	/*
 	 * método para bloquear a tela de cadastro
 	 */
 	private void bloquearTela() {
-		
-		tfCodigo.setEditable(false);
-		tfNome.setEditable(false);
-		tfAreaDeVenda.setEditable(false);
-		tfCidade.setEditable(false);
+
+		tfCodigo.setEnabled(false);
+		tfNome.setEnabled(false);
+		tfAreaDeVenda.setEnabled(false);
+		tfCidade.setEnabled(false);
 		cbxEstados.setEnabled(false);
-		tfIdade.setEditable(false);
-		tfSalario.setEditable(false);
+		tfIdade.setEnabled(false);
+		tfSalario.setEnabled(false);
 		rbMasculino.setEnabled(false);
 		rbFeminimo.setEnabled(false);
 		btSalvar.setVisible(false);
 		btCancelar.setVisible(false);
 		btNovo.setVisible(true);
 		btSair.setVisible(true);
-		
+
 	}
-	
+
 	/*
 	 * método para liberar a tela de cadastro
 	 */
 	private void liberarTela() {
-		
-		tfCodigo.setEditable(!false);
-		tfNome.setEditable(!false);
-		tfAreaDeVenda.setEditable(!false);
-		tfCidade.setEditable(!false);
+
+		tfCodigo.setEnabled(!false);
+		tfNome.setEnabled(!false);
+		tfAreaDeVenda.setEnabled(!false);
+		tfCidade.setEnabled(!false);
 		cbxEstados.setEnabled(!false);
-		tfIdade.setEditable(!false);
-		tfSalario.setEditable(!false);
+		tfIdade.setEnabled(!false);
+		tfSalario.setEnabled(!false);
 		rbMasculino.setEnabled(!false);
 		rbFeminimo.setEnabled(!false);
 		btSalvar.setVisible(!false);
 		btCancelar.setVisible(!false);
 		btNovo.setVisible(!true);
 		btSair.setVisible(!true);
-		
+
 	}
-	
+
 	/*
 	 * método para limpar a tela de cadastro
 	 */
 	private void limparTela() {
-		
-		tfCodigo.setEditable(!false);
-		tfNome.setEditable(!false);
-		tfAreaDeVenda.setEditable(!false);
-		tfCidade.setEditable(!false);
-		tfIdade.setEditable(!false);
-		tfSalario.setEditable(!false);
+
+		tfCodigo.setText(null);
+		tfNome.setText(null);
+		tfAreaDeVenda.setText(null);
+		tfCidade.setText(null);
+		tfIdade.setText(null);
+		tfSalario.setText(null);
 		grpSexo.clearSelection();
 		cbxEstados.setSelectedIndex(0);
-				
+
+	}
+
+	/*
+	 * método para carregar combobox
+	 */
+	private void carregarComboEstados() {
+
+		cbxEstados.addItem("-Selecione Estado-");
+
+		for (Estado estado : new EstadoController().getEstados()) {
+			cbxEstados.addItem(estado.getNome());
+		}
+
+	}
+
+	/*
+	 * Método para receber a ação do clique salvar
+	 */
+	public void salvar() {
+
+		// validando dados para salvar vendedor
+		if (validar()) {
+			// procedimentos de gravação do objeto vendedor no arquivo txt
+			
+			//limpar a tela preenchida
+			limparTela();
+			
+			// bloquear a tela
+			bloquearTela();
+			
+			//exibindo mensagem de sucesso 
+			Mensagem.sucessoGravarVendedor(Titulo.cadastroVendedor);
+		}
+
+	}
+
+	/*
+	 * método para validar os campos da tela
+	 */
+	private boolean validar() {
+
+		// validar campo codigo
+		if (Valida.isEmptyOrNull(tfCodigo.getText())) {
+			Mensagem.erroCodigoVazio(Titulo.cadastroVendedor);
+			// focando no erro
+			tfCodigo.grabFocus();
+			return false;
+		}
+		// validar campo nome
+		if (Valida.isEmptyOrNull(tfNome.getText())) {
+			Mensagem.erroNomeVazio(Titulo.cadastroVendedor);
+			// focando no erro
+			tfNome.grabFocus();
+			return false;
+		}
+		// validar campo area de venda
+		if (Valida.isEmptyOrNull(tfAreaDeVenda.getText())) {
+			Mensagem.erroAreaVendaVazio(Titulo.cadastroVendedor);
+			// focando no erro
+			tfAreaDeVenda.grabFocus();
+			return false;
+		}
+		// validar campo cidade
+		if (Valida.isEmptyOrNull(tfCidade.getText())) {
+			Mensagem.erroCidadeVazio(Titulo.cadastroVendedor);
+			// focando no erro
+			tfCidade.grabFocus();
+			return false;
+		}
+		// validação da comboBox
+		if (cbxEstados.getSelectedIndex() == 0) {
+			Mensagem.erroEstadoVazio(Titulo.cadastroVendedor);
+			// focando no erro
+			cbxEstados.grabFocus();
+			return false;
+		}
+		// validação do radio button sexo
+		if (!rbMasculino.isSelected()) {
+			if (!rbFeminimo.isSelected()) {
+				Mensagem.erroSexoVazio(Titulo.cadastroVendedor);
+				return false;
+			}
+		}
+		// validar campo idade
+		if (Valida.isEmptyOrNull(tfIdade.getText())) {
+			Mensagem.erroIdadeVazio(Titulo.cadastroVendedor);
+			// focando no erro
+			tfIdade.grabFocus();
+			return false;
+		}
+		// validar campo salario
+		if (Valida.isEmptyOrNull(tfSalario.getText())) {
+			Mensagem.erroSalarioVazio(Titulo.cadastroVendedor);
+			// focando no erro
+			tfSalario.grabFocus();
+			return false;
+		}
+		return true;
 	}
 
 }

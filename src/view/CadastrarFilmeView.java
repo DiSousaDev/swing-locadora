@@ -14,7 +14,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 /**
- * Classe para receber, armazenar e exibir os dados da tela de Cadastro de Filmes
+ * Classe para receber, armazenar e exibir os dados da tela de Cadastro de
+ * Filmes
  * 
  * @author Éder Diego de Sousa
  * @since 4 de mar. de 2021
@@ -33,9 +34,9 @@ public class CadastrarFilmeView {
 	// componente responsavel por gerenciar os JRadioButton
 	private ButtonGroup grpRadioDisponivel, grpRadioPromocao;
 	// componentes checkbox
-	private JCheckBox cbAacao, cbFiccao, cbTerror, cbComedia, cbOutro;
+	private JCheckBox cbAcao, cbFiccao, cbTerror, cbComedia, cbOutro;
 	// botao para verificar a acao de clique
-	private JButton btSalvar, btCancelar;
+	private JButton btNovo, btSair, btSalvar, btCancelar;
 	// componente para organização
 	private JPanel painel = new JPanel();
 
@@ -128,13 +129,13 @@ public class CadastrarFilmeView {
 		/*
 		 * configurações do JCheckbox
 		 */
-		cbAacao = new JCheckBox();
+		cbAcao = new JCheckBox();
 		cbFiccao = new JCheckBox();
 		cbTerror = new JCheckBox();
 		cbComedia = new JCheckBox();
 		cbOutro = new JCheckBox();
 		// configurando o texto do componente
-		cbAacao.setText("Ação");
+		cbAcao.setText("Ação");
 		cbFiccao.setText("Ficção");
 		cbTerror.setText("Terror");
 		cbComedia.setText("Comédia");
@@ -142,7 +143,7 @@ public class CadastrarFilmeView {
 		// configurando posição e tamanho
 		JPanel painelCheckbox = new JPanel(new GridLayout(1, 5, 0, 10));
 		painelCheckbox.setBounds(120, 198, 380, 25);
-		painelCheckbox.add(cbAacao);
+		painelCheckbox.add(cbAcao);
 		painelCheckbox.add(cbFiccao);
 		painelCheckbox.add(cbTerror);
 		painelCheckbox.add(cbComedia);
@@ -156,17 +157,50 @@ public class CadastrarFilmeView {
 		// configurando texto botao
 		btSalvar.setText("SALVAR");
 		btCancelar.setText("CANCELAR");
+		btNovo = new JButton("NOVO");
+		btSair = new JButton("SAIR");
+		btNovo.setBounds(120, 238, 140, 30);
 		btSalvar.setBounds(120, 238, 140, 30);
 		btCancelar.setBounds(280, 238, 140, 30);
+		btSair.setBounds(280, 238, 140, 30);
 		// configurando ação do botão
-		btCancelar.addActionListener(new ActionListener() {
+		btSalvar.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				janela.dispose();
 			}
 		});
-		
+
+		btCancelar.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// método para limpar os campos da tela
+				limparTela();
+				// método para bloquear os campos da tela
+				bloquearTela();
+			}
+		});
+
+		btNovo.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// método para desbloqurar a tela
+				liberarTela();
+			}
+		});
+
+		btSair.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// fecha a janela e mantém o menu aberto
+				janela.dispose();
+			}
+		});
+
 		/*
 		 * configurações do painel da tela JPanel
 		 */
@@ -192,11 +226,76 @@ public class CadastrarFilmeView {
 		painel.add(painelCheckbox);
 		painel.add(btSalvar);
 		painel.add(btCancelar);
+		painel.add(btNovo);
+		painel.add(btSair);
 
+		// bloqueando a tela
+		bloquearTela();
+		
 		// configurando a visibilidade da tela
 		janela.setVisible(true);
+		janela.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		janela.setAlwaysOnTop(true);
 
+	}
+
+	protected void liberarTela() {
+		tfCodigo.setEnabled(!false);
+		tfNome.setEnabled(!false);
+		tfValor.setEnabled(!false);
+		rbDisponivelNao.setEnabled(!false);
+		rbDisponivelSim.setEnabled(!false);
+		rbPromocaoNao.setEnabled(!false);
+		rbPromocaoSim.setEnabled(!false);
+		tfValorPromocao.setEnabled(!false);
+		cbAcao.setEnabled(!false);
+		cbComedia.setEnabled(!false);
+		cbFiccao.setEnabled(!false);
+		cbOutro.setEnabled(!false);
+		cbTerror.setEnabled(!false);
+		btSalvar.setVisible(!false);
+		btCancelar.setVisible(!false);
+		btNovo.setVisible(!true);
+		btSair.setVisible(!true);
+		
+	}
+
+	protected void bloquearTela() {
+		
+		tfCodigo.setEnabled(false);
+		tfNome.setEnabled(false);
+		tfValor.setEnabled(false);
+		rbDisponivelNao.setEnabled(false);
+		rbDisponivelSim.setEnabled(false);
+		rbPromocaoNao.setEnabled(false);
+		rbPromocaoSim.setEnabled(false);
+		tfValorPromocao.setEnabled(false);
+		cbAcao.setEnabled(false);
+		cbComedia.setEnabled(false);
+		cbFiccao.setEnabled(false);
+		cbOutro.setEnabled(false);
+		cbTerror.setEnabled(false);
+		btSalvar.setVisible(false);
+		btCancelar.setVisible(false);
+		btNovo.setVisible(true);
+		btSair.setVisible(true);
+		
+	}
+
+	protected void limparTela() {
+		
+		tfCodigo.setText(null);
+		tfNome.setText(null);
+		tfValor.setText(null);
+		grpRadioDisponivel.clearSelection();
+		grpRadioPromocao.clearSelection();
+		tfValorPromocao.setText(null);
+		cbAcao.setSelected(false);
+		cbComedia.setSelected(false);
+		cbFiccao.setSelected(false);
+		cbOutro.setSelected(false);
+		cbTerror.setSelected(false);
+				
 	}
 
 }

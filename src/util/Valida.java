@@ -8,4 +8,11 @@ package util;
  */
 public class Valida {
 
+	/*
+	 * método para verificar se o campo é diferente de vazio ou nulo
+	 */
+	public static boolean isEmptyOrNull(String args) {
+		return args.trim().equals("") || args.trim() == null;
+	}
+	
 }

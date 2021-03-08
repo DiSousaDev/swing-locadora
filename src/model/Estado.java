@@ -18,6 +18,12 @@ public class Estado {
 
 	}
 
+	// criando construtor com parâmetro
+	public Estado(String nome, String uf) {
+		this.nome = nome;
+		this.uf = uf;
+	}
+
 	// metodos getters e setters para acesso aos atributos
 	public String getNome() {
 		return nome;
