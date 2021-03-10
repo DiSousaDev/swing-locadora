@@ -10,8 +10,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import controller.ClienteController;
+import model.Cliente;
+import util.Util;
+
 /**
- * Classe para consultar e exibir as informações dos Clientes cadastrados no sistema.
+ * Classe para consultar e exibir as informações dos Clientes cadastrados no
+ * sistema.
  * 
  * @author Éder Diego de Sousa
  * @since 4 de mar. de 2021
@@ -29,7 +34,7 @@ public class ConsultarClienteView {
 	// vetor auxiliar pra armazenar os nomes das colunas
 	private String colunas[] = { "Nome", "Sexo", "Idade", "Cidade", "Celular" };
 	// matriz auxliar para armazenar os dados exibidos na tabela.
-	private String linhas[][] = { };// duas colunas
+	private String linhas[][] = {};// duas colunas
 	// botao para verificar a acao de clique
 	private JButton btSair;
 	// componente para organização
@@ -59,7 +64,7 @@ public class ConsultarClienteView {
 		// definir o modelo utilizado na tabela - qtde de linhas e colunas.
 		DefaultTableModel modelo = new DefaultTableModel(linhas, colunas);
 		tabela = new JTable(modelo);
-		
+
 		/*
 		 * Configurações do jScrolPane
 		 */
@@ -68,7 +73,7 @@ public class ConsultarClienteView {
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);// sempre vertical
 		// configurar a posição e tamanho
 		scroll.setBounds(2, 2, 620, 330);
-		
+
 		/*
 		 * configurações do JButton
 		 */
@@ -95,12 +100,33 @@ public class ConsultarClienteView {
 		// adicionando os componentes no painel
 		painel.add(scroll);
 		painel.add(btSair);
+		
+		// inserindo valores na tabela
+		carregarTabela();
 
 		// configurando a visibilidade da tela
 		janela.setVisible(true);
 		janela.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		janela.setAlwaysOnTop(true);
 
 	}
 
+	/*
+	 * Método para inserir valores na tabelas com os vendedores cadastrados no
+	 * arquivo TXT
+	 */
+	public void carregarTabela() {
+		DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
+		// laco para preencher a tabela
+		for (Cliente cliente : new ClienteController().getClientes()) {
+
+			// adicionando linhas na tabela
+			modelo.addRow(new Object[] { 
+					cliente.getNome(), 
+					Util.getSexoString(cliente.getSexo()),
+					cliente.getIdade() + "", 
+					cliente.getEndereco().getCidade(), 
+					cliente.getCelular() 
+					});
+		}
+	}
 }

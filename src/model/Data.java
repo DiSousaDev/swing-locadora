@@ -16,7 +16,13 @@ public class Data {
 
 	// criando metodo construtor
 	public Data() {
+	}
 
+	// construtor com parâmetro
+	public Data(int dia, int mes, int ano) {
+		this.dia = dia;
+		this.mes = mes;
+		this.ano = ano;
 	}
 
 	// metodos getters e setters para acesso aos atributos

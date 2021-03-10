@@ -13,9 +13,12 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import controller.EstadoController;
+import controller.VendedorController;
 import model.Estado;
+import model.Vendedor;
 import util.Mensagem;
 import util.Titulo;
+import util.Util;
 import util.Valida;
 
 /**
@@ -303,18 +306,43 @@ public class CadastrarVendedorView {
 
 		// validando dados para salvar vendedor
 		if (validar()) {
-			// procedimentos de gravação do objeto vendedor no arquivo txt
-			
-			//limpar a tela preenchida
+			/*
+			 * procedimentos de gravação do objeto vendedor no arquivo txt
+			 */
+			Vendedor vendedor = getVendedor();
+			// chamando o método para gravar o arquivo
+			new VendedorController().gravarTxtVendedor(vendedor);
+
+			// limpar a tela preenchida
 			limparTela();
-			
+
 			// bloquear a tela
 			bloquearTela();
-			
-			//exibindo mensagem de sucesso 
+
+			// exibindo mensagem de sucesso
 			Mensagem.sucessoGravarVendedor(Titulo.cadastroVendedor);
 		}
 
+	}
+
+	/*
+	 * método para valorizar um objeto vendedor utilizando os campos da tela
+	 */
+	private Vendedor getVendedor() {
+
+		// instanciando o objeto vendedor para retorno do método
+		Vendedor vendedor = new Vendedor();
+
+		// valorizando o objeto vendedor
+		vendedor.setCodigo(Util.getInt(tfCodigo.getText()));
+		vendedor.setNome(tfNome.getText());
+		vendedor.setAreaVenda(tfAreaDeVenda.getText());
+		vendedor.setCidade(tfCidade.getText());
+		vendedor.setEstado(cbxEstados.getSelectedItem() + "");
+		vendedor.setSexo(rbMasculino.isSelected() ? 'M' : 'F');
+		vendedor.setIdade(Util.getInt(tfIdade.getText()));
+		vendedor.setSalario(Util.getDouble(tfSalario.getText()));
+		return vendedor;
 	}
 
 	/*
@@ -325,6 +353,11 @@ public class CadastrarVendedorView {
 		// validar campo codigo
 		if (Valida.isEmptyOrNull(tfCodigo.getText())) {
 			Mensagem.erroCodigoVazio(Titulo.cadastroVendedor);
+			// focando no erro
+			tfCodigo.grabFocus();
+			return false;
+		} else if (!Valida.isInteger(tfCodigo.getText())) {
+			Mensagem.erroCodigoInvalido(Titulo.cadastroVendedor);
 			// focando no erro
 			tfCodigo.grabFocus();
 			return false;
@@ -370,10 +403,20 @@ public class CadastrarVendedorView {
 			// focando no erro
 			tfIdade.grabFocus();
 			return false;
+		} else if (!Valida.isInteger(tfIdade.getText())) {
+			Mensagem.erroIdadeInvalido(Titulo.cadastroVendedor);
+			// focando no erro
+			tfIdade.grabFocus();
+			return false;
 		}
 		// validar campo salario
 		if (Valida.isEmptyOrNull(tfSalario.getText())) {
 			Mensagem.erroSalarioVazio(Titulo.cadastroVendedor);
+			// focando no erro
+			tfSalario.grabFocus();
+			return false;
+		} else if (!Valida.isDouble(tfSalario.getText())) {
+			Mensagem.erroSalarioInvalido(Titulo.cadastroVendedor);
 			// focando no erro
 			tfSalario.grabFocus();
 			return false;

@@ -13,6 +13,13 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import controller.FilmeController;
+import model.Filme;
+import util.Mensagem;
+import util.Titulo;
+import util.Util;
+import util.Valida;
+
 /**
  * Classe para receber, armazenar e exibir os dados da tela de Cadastro de
  * Filmes
@@ -168,7 +175,7 @@ public class CadastrarFilmeView {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				janela.dispose();
+				salvar();
 			}
 		});
 
@@ -231,11 +238,10 @@ public class CadastrarFilmeView {
 
 		// bloqueando a tela
 		bloquearTela();
-		
+
 		// configurando a visibilidade da tela
 		janela.setVisible(true);
 		janela.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		janela.setAlwaysOnTop(true);
 
 	}
 
@@ -257,11 +263,11 @@ public class CadastrarFilmeView {
 		btCancelar.setVisible(!false);
 		btNovo.setVisible(!true);
 		btSair.setVisible(!true);
-		
+
 	}
 
 	protected void bloquearTela() {
-		
+
 		tfCodigo.setEnabled(false);
 		tfNome.setEnabled(false);
 		tfValor.setEnabled(false);
@@ -279,11 +285,11 @@ public class CadastrarFilmeView {
 		btCancelar.setVisible(false);
 		btNovo.setVisible(true);
 		btSair.setVisible(true);
-		
+
 	}
 
 	protected void limparTela() {
-		
+
 		tfCodigo.setText(null);
 		tfNome.setText(null);
 		tfValor.setText(null);
@@ -295,7 +301,143 @@ public class CadastrarFilmeView {
 		cbFiccao.setSelected(false);
 		cbOutro.setSelected(false);
 		cbTerror.setSelected(false);
-				
+
+	}
+
+	/*
+	 * Método para receber a ação do clique salvar
+	 */
+	private void salvar() {
+
+		// validando dados para salvar filme
+		if (validar()) {
+			/*
+			 * procedimentos de gravação do objeto filme no arquivo txt
+			 */
+			Filme filme = getFilme();
+			// chamando o método para gravar o arquivo
+			 new FilmeController().gravarTxtFilme(filme);
+
+			// limpar a tela preenchida
+			limparTela();
+
+			// bloquear a tela
+			bloquearTela();
+
+			// exibindo mensagem de sucesso
+			Mensagem.sucessoGravarFilme(Titulo.cadastroFilme);
+		}
+
+	}
+	
+	/*
+	 * método para valorizar um objeto filme utilizando os campos da tela
+	 */
+	private Filme getFilme() {
+
+		// instanciando o objeto filme para retorno do método
+		Filme filme = new Filme();
+
+		// valorizando o objeto filme
+		filme.setCodigo(Util.getInt(tfCodigo.getText()));
+		filme.setNome(tfNome.getText());
+		filme.setValor(Util.getDouble(tfValor.getText()));
+		filme.setDisponivel(rbDisponivelSim.isSelected() ? true : false);
+		filme.setPromocao(rbPromocaoSim.isSelected() ? true : false);
+		filme.setValorPromocao(Util.getDouble(tfValorPromocao.getText()));
+		filme.setGenero(getComboGenero());	
+		return filme;
+	}
+
+	/*
+	 * método para validar os campos da tela
+	 */
+	private boolean validar() {
+
+		// validar campo codigo
+		if (Valida.isEmptyOrNull(tfCodigo.getText())) {
+			Mensagem.erroCodigoVazio(Titulo.cadastroFilme);
+			// focando no erro
+			tfCodigo.grabFocus();
+			return false;
+		} else if (!Valida.isInteger(tfCodigo.getText())) {
+			Mensagem.erroCodigoInvalido(Titulo.cadastroFilme);
+			// focando no erro
+			tfCodigo.grabFocus();
+			return false;
+		}
+		// validar campo nome
+		if (Valida.isEmptyOrNull(tfNome.getText())) {
+			Mensagem.erroNomeVazio(Titulo.cadastroFilme);
+			// focando no erro
+			tfNome.grabFocus();
+			return false;
+		}
+		// validar campo valor
+		if (Valida.isEmptyOrNull(tfValor.getText())) {
+			Mensagem.erroValorVazio(Titulo.cadastroFilme);
+			// focando no erro
+			tfValor.grabFocus();
+			return false;
+		} else if (!Valida.isDouble(tfValor.getText())) {
+			Mensagem.erroValorInvalido(Titulo.cadastroFilme);
+			// focando no erro
+			tfValor.grabFocus();
+			return false;
+		}
+		// validação do radio button disponivel
+		if (!rbDisponivelSim.isSelected()) {
+			if (!rbDisponivelNao.isSelected()) {
+				Mensagem.erroDisponivelVazio(Titulo.cadastroFilme);
+				return false;
+			}
+		}
+		// validação do radio button promocao
+		if (!rbPromocaoSim.isSelected()) {
+			if (!rbPromocaoNao.isSelected()) {
+				Mensagem.erroPromocaoVazio(Titulo.cadastroFilme);
+				return false;
+			}
+		}
+		// validar campo valor promoção
+		if (Valida.isEmptyOrNull(tfValorPromocao.getText())) {
+			Mensagem.erroValorPromocaoVazio(Titulo.cadastroFilme);
+			// focando no erro
+			tfValorPromocao.grabFocus();
+			return false;
+		} else if (!Valida.isDouble(tfValorPromocao.getText())) {
+			Mensagem.erroValorPromocaoInvalido(Titulo.cadastroFilme);
+			// focando no erro
+			tfValorPromocao.grabFocus();
+			return false;
+		}
+		// validação do check box genero
+		if (!cbAcao.isSelected() && !cbComedia.isSelected() && !cbFiccao.isSelected() && !cbTerror.isSelected()
+				&& !cbOutro.isSelected()) {
+			Mensagem.erroGeneroVazio(Titulo.cadastroFilme);
+			return false;
+		}
+		return true;
+	}
+	
+	private String getComboGenero() {
+		String msg = "";
+		if(cbAcao.isSelected() ) {
+			msg += cbAcao.getText() + ",";
+		}
+		if(cbComedia.isSelected() ) {
+			msg += cbComedia.getText() + ",";
+		}
+		if(cbFiccao.isSelected() ) {
+			msg += cbFiccao.getText() + ",";
+		}
+		if(cbTerror.isSelected() ) {
+			msg += cbTerror.getText() + ",";
+		}
+		if(cbOutro.isSelected() ) {
+			msg += cbOutro.getText() + ",";
+		}
+		return msg;
 	}
 
 }

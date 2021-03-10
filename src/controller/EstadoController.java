@@ -47,7 +47,7 @@ public class EstadoController {
 				estados.add(estado);
 			}
 		} catch (FileNotFoundException e) {
-			Mensagem.erroLerArquivo(Titulo.cadastroCliente);
+			Mensagem.erroLerArquivoEstado(Titulo.cadastroCliente);
 			e.printStackTrace();
 		}
 		return estados;
@@ -58,6 +58,5 @@ public class EstadoController {
 		String[] dado = linha.split(";"); // separando a linha por ;
 		return new Estado(dado[1], dado[0]); // retornando o objeto estado
 	}
-
 	
 }

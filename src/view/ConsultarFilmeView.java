@@ -10,6 +10,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import controller.FilmeController;
+import model.Filme;
+import util.Util;
+
 /**
  * Classe para consultar e exibr as informações dos filmes cadastrados no sistema.
  * 
@@ -28,8 +32,6 @@ public class ConsultarFilmeView {
 	private JTable tabela;
 	// vetor auxiliar pra armazenar os nomes das colunas
 	private String colunas[] = { "Códgo", "Nome", "Valor", "Disponível", "Promoção", "Valor Promocional" };
-	// matriz auxliar para armazenar os dados exibidos na tabela.
-	private String linhas[][] = { };// duas colunas
 	// botao para verificar a acao de clique
 	private JButton btSair;
 	// componente para organização
@@ -57,7 +59,7 @@ public class ConsultarFilmeView {
 		// toda vez que for utilizar precisa definir o modelo(linhas x colunas)
 		// primeiro
 		// definir o modelo utilizado na tabela - qtde de linhas e colunas.
-		DefaultTableModel modelo = new DefaultTableModel(linhas, colunas);
+		DefaultTableModel modelo = new DefaultTableModel(null, colunas);
 		tabela = new JTable(modelo);
 		
 		/*
@@ -95,12 +97,34 @@ public class ConsultarFilmeView {
 		// adicionando os componentes no painel
 		painel.add(scroll);
 		painel.add(btSair);
+		
+		// carregando a tabela
+		carregarTabela();
 
 		// configurando a visibilidade da tela
 		janela.setVisible(true);
 		janela.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		janela.setAlwaysOnTop(true);
 
+	}
+	
+	/*
+	 * Método para inserir valores na tabelas com os filmes cadastrados no arquivo TXT
+	 */
+	public void carregarTabela() {
+		DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();		
+		// laco para preencher a tabela
+		for (Filme filme : new FilmeController().getFilmes()) {
+			
+			// adicionando linhas na tabela
+			modelo.addRow(new String[] {
+					filme.getCodigo() + "",
+					filme.getNome(), 
+					filme.getValor() + "",
+					Util.getBooleanToString(filme.isDisponivel()),
+					Util.getBooleanToString(filme.isPromocao()),
+					filme.getValorPromocao() + "" 
+					});
+		}
 	}
 
 }

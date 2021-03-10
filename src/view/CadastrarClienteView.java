@@ -16,9 +16,17 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
+import controller.ClienteController;
 import controller.EstadoController;
+import model.Cliente;
+import model.Data;
+import model.Endereco;
 import model.Estado;
 import util.CampoFormatado;
+import util.Mensagem;
+import util.Titulo;
+import util.Util;
+import util.Valida;
 
 /**
  * Classe para receber, armazenar e exibir os dados da tela de Cadastro de
@@ -189,7 +197,7 @@ public class CadastrarClienteView {
 		lbComplemento = new JLabel("Complemento:");
 		lbBairro = new JLabel("Bairro:");
 		lbCidade = new JLabel("Cidade:");
-		lbEstado = new JLabel("Estadp:");
+		lbEstado = new JLabel("Estado:");
 		// configurando posição e tamanho JTextField endereço
 		lbCep.setBounds(10, 20, 90, 20);
 		lbLogradouro.setBounds(10, 50, 90, 20);
@@ -277,7 +285,7 @@ public class CadastrarClienteView {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				janela.dispose();
+				salvar();
 			}
 		});
 
@@ -334,7 +342,7 @@ public class CadastrarClienteView {
 
 		// bloqueando tela
 		bloquearTela();
-		
+
 		// configurando a visibilidade da tela
 		janela.setVisible(true);
 		janela.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -365,7 +373,7 @@ public class CadastrarClienteView {
 		btCancelar.setVisible(!false);
 		btNovo.setVisible(!true);
 		btSair.setVisible(!true);
-		
+
 	}
 
 	protected void bloquearTela() {
@@ -429,4 +437,210 @@ public class CadastrarClienteView {
 
 	}
 
+	/*
+	 * Método para receber a ação do clique salvar
+	 */
+	private void salvar() {
+
+		// validando dados para salvar cliente
+		if (validar()) {
+			/*
+			 * procedimentos de gravação do objeto cliente no arquivo txt
+			 */
+			Cliente cliente = getCliente();
+			// chamando o método para gravar o arquivo
+			new ClienteController().gravarTxtCliente(cliente);
+
+			// limpar a tela preenchida
+			limparTela();
+
+			// bloquear a tela
+			bloquearTela();
+
+			// exibindo mensagem de sucesso
+			Mensagem.sucessoGravarCliente(Titulo.cadastroCliente);
+		}
+
+	}
+
+	/*
+	 * método para valorizar um objeto cliente utilizando os campos da tela
+	 */
+	private Cliente getCliente() {
+
+		// recebendo a Data e separando dia/mes/ano
+		String aux[] = tfDataNascimentoFormatado.getText().split("/");
+		// instanciando o objeto data para associar a cliente
+		Data data = new Data(Util.getInt(aux[0]), Util.getInt(aux[1]), Util.getInt(aux[2]));
+		// instanciando o objeto endereço para associar a cliente
+		Endereco endereco = new Endereco();
+		// valorizando objeto endereco para associar ao cliente
+		endereco.setCodigo(Util.getInt(tfCodigoCliente.getText()));
+		endereco.setCep(tfCepFormatado.getText());
+		endereco.setLogradouro(tfLogradouro.getText());
+		endereco.setEndereco(tfEndereco.getText());
+		endereco.setNumero(Util.getInt(tfNumero.getText()));
+		endereco.setComplemento(tfComplemento.getText());
+		endereco.setBairro(tfBairro.getText());
+		endereco.setCidade(tfCidade.getText());
+		endereco.setEstado(cbxEstados.getSelectedItem() + "");
+
+		// instanciando o objeto cliente para retorno do método
+		Cliente cliente = new Cliente();
+		// valorizando o objeto cliente
+		cliente.setCodigo(Util.getInt(tfCodigoCliente.getText()));
+		cliente.setNome(tfNome.getText());
+		cliente.setCpf(tfCpfFormatado.getText());
+		cliente.setRg(tfRgFormatado.getText());
+		cliente.setEmail(tfEmail.getText());
+		cliente.setDataNascimento(data);
+		cliente.setCelular(tfCelularFormatado.getText());
+		cliente.setTelefone(tfTelefoneFormatado.getText());
+		cliente.setIdade(Util.getInt(tfIdade.getText()));
+		cliente.setSexo(rbMasculino.isSelected() ? 'M' : 'F');
+		cliente.setEndereco(endereco);
+		return cliente;
+	}
+
+	/*
+	 * método para validar os campos da tela
+	 */
+	private boolean validar() {
+
+		// validar campo codigo
+		if (Valida.isEmptyOrNull(tfCodigoCliente.getText())) {
+			Mensagem.erroCodigoVazio(Titulo.cadastroCliente);
+			// focando no erro
+			tfCodigoCliente.grabFocus();
+			return false;
+		} else if (!Valida.isInteger(tfCodigoCliente.getText())) {
+			Mensagem.erroCodigoInvalido(Titulo.cadastroCliente);
+			// focando no erro
+			tfCodigoCliente.grabFocus();
+			return false;
+		}
+		// validar campo nome
+		if (Valida.isEmptyOrNull(tfNome.getText())) {
+			Mensagem.erroNomeVazio(Titulo.cadastroCliente);
+			// focando no erro
+			tfNome.grabFocus();
+			return false;
+		}
+		// validar campo cpf
+		if (tfCpfFormatado.getText().equals("___.___.___-__")) {
+			Mensagem.erroCpfVazio(Titulo.cadastroCliente);
+			// focando no erro
+			tfCpfFormatado.grabFocus();
+			return false;
+		}
+		// validar campo Rg
+		if (tfRgFormatado.getText().equals("__.___.___-_")) {
+			Mensagem.erroRgVazio(Titulo.cadastroCliente);
+			// focando no erro
+			tfRgFormatado.grabFocus();
+			return false;
+		}
+		// validar campo email
+		if (Valida.isEmptyOrNull(tfEmail.getText())) {
+			Mensagem.erroEmailVazio(Titulo.cadastroCliente);
+			// focando no erro
+			tfEmail.grabFocus();
+			return false;
+		}
+		// validar campo Data de Nascimento
+		if (tfDataNascimentoFormatado.getText().equals("__/__/____")) {
+			Mensagem.erroDtNascimentoVazio(Titulo.cadastroCliente);
+			// focando no erro
+			tfDataNascimentoFormatado.grabFocus();
+			return false;
+		}
+		// validar campo celular
+		if (tfCelularFormatado.getText().equals("(__) _____-____")) {
+			Mensagem.erroCelularVazio(Titulo.cadastroCliente);
+			// focando no erro
+			tfCelularFormatado.grabFocus();
+			return false;
+		}
+		// validar campo telefone
+		if (tfTelefoneFormatado.getText().equals("(__) ____-____")) {
+			Mensagem.erroTelefoneVazio(Titulo.cadastroCliente);
+			// focando no erro
+			tfTelefoneFormatado.grabFocus();
+			return false;
+		}
+		// validar campo idade
+		if (Valida.isEmptyOrNull(tfIdade.getText())) {
+			Mensagem.erroIdadeVazio(Titulo.cadastroCliente);
+			// focando no erro
+			tfIdade.grabFocus();
+			return false;
+		} else if (!Valida.isInteger(tfIdade.getText())) {
+			Mensagem.erroIdadeInvalido(Titulo.cadastroCliente);
+			// focando no erro
+			tfIdade.grabFocus();
+			return false;
+		}
+		// validação do radio button sexo
+		if (!rbMasculino.isSelected()) {
+			if (!rbFeminimo.isSelected()) {
+				Mensagem.erroSexoVazio(Titulo.cadastroCliente);
+				return false;
+			}
+		}
+		// validar campo CEP
+		if (tfCepFormatado.getText().equals("__.___-___")) {
+			Mensagem.erroCepVazio(Titulo.cadastroCliente);
+			// focando no erro
+			tfCepFormatado.grabFocus();
+			return false;
+		}
+		// validar campo logradouro
+		if (Valida.isEmptyOrNull(tfLogradouro.getText())) {
+			Mensagem.erroLogradouroVazio(Titulo.cadastroCliente);
+			// focando no erro
+			tfLogradouro.grabFocus();
+			return false;
+		}
+		// validar campo endereço
+		if (Valida.isEmptyOrNull(tfEndereco.getText())) {
+			Mensagem.erroEnderecoVazio(Titulo.cadastroCliente);
+			// focando no erro
+			tfEndereco.grabFocus();
+			return false;
+		}
+		// validar campo numero
+		if (Valida.isEmptyOrNull(tfNumero.getText())) {
+			Mensagem.erroNumeroVazio(Titulo.cadastroCliente);
+			// focando no erro
+			tfNumero.grabFocus();
+			return false;
+		} else if (!Valida.isInteger(tfNumero.getText())) {
+			Mensagem.erroNumeroInvalido(Titulo.cadastroCliente);
+			// focando no erro
+			tfNumero.grabFocus();
+			return false;
+		}
+		// validar campo bairro
+		if (Valida.isEmptyOrNull(tfBairro.getText())) {
+			Mensagem.erroBairroVazio(Titulo.cadastroCliente);
+			// focando no erro
+			tfBairro.grabFocus();
+			return false;
+		}
+		// validar campo cidade
+		if (Valida.isEmptyOrNull(tfCidade.getText())) {
+			Mensagem.erroCidadeVazio(Titulo.cadastroCliente);
+			// focando no erro
+			tfCidade.grabFocus();
+			return false;
+		}
+		// validar campo estado
+		if (cbxEstados.getSelectedIndex() == 0) {
+			Mensagem.erroEstadoVazio(Titulo.cadastroCliente);
+			// focando no erro
+			cbxEstados.grabFocus();
+			return false;
+		}
+		return true;
+	}
 }

@@ -12,7 +12,7 @@ public class Endereco {
 	// declarando atributos
 	private int codigo;
 	private String logradouro;
-	private String endereço;
+	private String endereco;
 	private int numero;
 	private String complemento;
 	private String bairro;
@@ -42,12 +42,12 @@ public class Endereco {
 		this.logradouro = logradouro;
 	}
 
-	public String getEndereço() {
-		return endereço;
+	public String getEndereco() {
+		return endereco;
 	}
 
-	public void setEndereço(String endereço) {
-		this.endereço = endereço;
+	public void setEndereco(String endereco) {
+		this.endereco = endereco;
 	}
 
 	public int getNumero() {

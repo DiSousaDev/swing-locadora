@@ -10,6 +10,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import controller.VendedorController;
+import model.Vendedor;
+
 /**
  * Classe para consultar e exibir as informações dos vendedores cadastrados no sistema.
  * 
@@ -28,8 +31,6 @@ public class ConsultarVendedorView {
 	private JTable tabela;
 	// vetor auxiliar pra armazenar os nomes das colunas
 	private String colunas[] = { "Nome", "Area de Venda", "Cidade", "Estado", "Sexo", "Idade", "Salario" };
-	// matriz auxliar para armazenar os dados exibidos na tabela.
-	private String linhas[][] = { };// duas colunas
 	// botao para verificar a acao de clique
 	private JButton btSair;
 	// componente para organização
@@ -57,7 +58,7 @@ public class ConsultarVendedorView {
 		// toda vez que for utilizar precisa definir o modelo(linhas x colunas)
 		// primeiro
 		// definir o modelo utilizado na tabela - qtde de linhas e colunas.
-		DefaultTableModel modelo = new DefaultTableModel(linhas, colunas);
+		DefaultTableModel modelo = new DefaultTableModel(null, colunas);
 		tabela = new JTable(modelo);
 		
 		/*
@@ -96,11 +97,34 @@ public class ConsultarVendedorView {
 		painel.add(scroll);
 		painel.add(btSair);
 
+		// exibindo dados na tabela
+		carregarTabela();
+		
 		// configurando a visibilidade da tela
 		janela.setVisible(true);
 		janela.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		janela.setAlwaysOnTop(true);
 
+	}
+	
+	/*
+	 * Método para inserir valores na tabelas com os vendedores cadastrados no arquivo TXT
+	 */
+	public void carregarTabela() {
+		DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();		
+		// laco para preencher a tabela
+		for (Vendedor vendedor :  new VendedorController().getVendedores()) {
+			
+			// adicionando linhas na tabela
+			modelo.addRow(new Object[] {
+					vendedor.getNome(), 
+					vendedor.getAreaVenda(),
+					vendedor.getCidade(),
+					vendedor.getEstado(),
+					vendedor.getSexo() + "",
+					vendedor.getIdade() + "",
+					vendedor.getSalario() + ""
+					});
+		}
 	}
 	
 }

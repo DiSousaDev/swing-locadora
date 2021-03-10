@@ -22,7 +22,7 @@ public class Tema {
 
 	// método para ler o ultimo tema salvo do arquivo
 	public static String getTheme() {
-		return Utilitaria.lerArquivo(ARQUIVO);
+		return Util.lerArquivo(ARQUIVO);
 	}
 
 	// método para configurar o tema

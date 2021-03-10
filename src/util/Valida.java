@@ -15,4 +15,28 @@ public class Valida {
 		return args.trim().equals("") || args.trim() == null;
 	}
 	
+	/*
+	 * método para verificar valor inteiro
+	 */
+	public static boolean isInteger(String args) {
+		try {
+			Integer.parseInt(args);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	/*
+	 * método para verificar valor double
+	 */
+	public static boolean isDouble(String args) {
+		try {
+			Double.parseDouble(args);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
 }
